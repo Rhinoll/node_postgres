@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>График</title>
+    <style>
+        table {
+            font-family: Arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+<div id="content-container">
+    <h1>График постояльцев</h1>
+    <table id="result-table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Полное имя</th>
+            <th>Класс комнаты</th>
+            <th>Дата заезда</th>
+            <th>Дата выезда</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<button onclick="navigateToGuestPage()">Посмотреть постольяцев</button>
+<button onclick="navigateToBookingPage()">Посмотреть бронирование</button>
+<button onclick="navigateToApartmentPage()">Посмотреть занятость номеров</button>
+<button onclick="navigateToServiceHistoryPage()">Посмотреть историю обслуживания</button>
+<button onclick="navigateToAdditionalPage()">Посмотреть дополнительные</button>
+<button onclick="navigateToStaffPage()">Посмотреть персонал</button>
+
+<script>
+    // Функция для загрузки данных с сервера и отображения в таблице
+    async function fetchData() {
+        const response = await fetch('/api/view');
+        const data = await response.json();
+
+        const tableBody = document.querySelector('#result-table tbody');
+
+        data.forEach(row => {
+            const newRow = tableBody.insertRow();
+            Object.values(row).forEach(value => {
+                const cell = newRow.insertCell();
+                cell.textContent = value;
+            });
+        });
+    }
+
+    fetchData();
+
+    // Функция для навигации на страницу additional_services
+    function navigateToAdditionalPage() {
+        window.location.href = '/additional_services';
+    }
+
+    function navigateToGuestPage() {
+        window.location.href = '/guest';
+    }
+
+    function navigateToApartmentPage() {
+        window.location.href = '/apartment.html';
+    }
+
+    function navigateToStaffPage() {
+        window.location.href = '/staff.html';
+    }
+    function navigateToServiceHistoryPage() {
+        window.location.href = '/serviceHistory.html';
+    }
+
+    function navigateToBookingPage() {
+        window.location.href = '/booking.html';
+    }
+</script>
+
+</body>
+</html>

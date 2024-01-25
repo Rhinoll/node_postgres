@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Занятость номеров</title>
+    <style>
+        table {
+            font-family: Arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+<div id=apartment>
+        <h1>Обновление записи из таблицы</h1>
+
+        <form id="updateForm">
+            <label for="id_room">ID для обновления:</label>
+            <input type="text" id="id_room" name="id_room" required>
+
+            <label for="status">Статус:</label>
+            <select id="status" name="status" required>
+                <option value="true">Занят</option>
+                <option value="false">Свободен</option>
+            </select>
+
+            <button type="button" onclick="updateData()">Обновить запись</button>
+        </form>
+    </div>
+
+    <h1>Список постояльцев</h1>
+    <table id="result-table">
+        <thead>
+        <tr>
+            <th>ID номера</th>
+            <th>Класс номера</th>
+            <th>Количество комнат</th>
+            <th>Цена</th>
+            <th>Статус занятости</th>
+            <th>Статус обслуживания</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+<button onclick="navigateToGuestPage()">Посмотреть постояльцев</button>
+<button onclick="navigateToBookingPage()">Посмотреть бронирование</button>
+<button onclick="navigateToServiceHistoryPage()">Посмотреть историю обслуживания</button>
+<button onclick="navigateToAdditionalPage()">Посмотреть дополнительные услуги</button>
+<button onclick="navigateToStaffPage()">Посмотреть персонал</button>
+<button onclick="navigateToViewPage()">Посмотреть график постольяцев</button>
+
+<script>
+    // Функция для загрузки данных с сервера и отображения в таблице
+    async function fetchData() {
+        const response = await fetch('/api/apartment');
+        const data = await response.json();
+
+        const tableBody = document.querySelector('#result-table tbody');
+
+        data.forEach(row => {
+            const newRow = tableBody.insertRow();
+            Object.values(row).forEach(value => {
+                const cell = newRow.insertCell();
+                cell.textContent = value;
+            });
+        });
+    }
+
+    fetchData();
+
+        async function updateData() {
+            const id = document.getElementById('id_room').value;
+            const status = document.getElementById('status').value;
+
+            const request = {
+                id_room: id,
+                booking_status: status
+            };
+            try {
+                const response = await fetch('/api/apartment', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(request)
+                });
+                if (response.ok) {
+                    alert('Запрос успешно отправлен!');
+                    // Дополнительные действия по необходимости
+                } else {
+                    alert('Произошла ошибка при отправке запроса.');
+                }
+            } catch (error) {
+                console.error('Ошибка при отправке запроса:', error);
+            }
+    }
+
+
+
+    // Функция для навигации на страницу additional_services
+    function navigateToGuestPage() {
+        window.location.href = '/guest.html';
+    }
+    function navigateToAdditionalPage() {
+        window.location.href = '/additional_services';
+    }
+
+    function navigateToViewPage() {
+        window.location.href = '/view.html';
+    }
+    function navigateToStaffPage() {
+        window.location.href = '/staff.html';
+    }
+    function navigateToServiceHistoryPage() {
+        window.location.href = '/serviceHistory.html';
+    }
+
+    function navigateToBookingPage() {
+        window.location.href = '/booking.html';
+    }
+
+</script>
+
+</body>
+</html>
+

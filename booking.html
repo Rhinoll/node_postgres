@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>История номеров</title>
+    <style>
+        table {
+            font-family: Arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+
+<div id="pageGuest">
+    <h1>Добавление записи в таблицу</h1>
+
+    <form id="postForm">
+        <label for="idRoom">ID комнаты:</label>
+        <input type="text" id="idRoom" name="idRoom"  required>
+
+        <label for="idGuest">ID гостя:</label>
+        <input type="text" id="idGuest" name="idGuest"  required>
+
+        <label for="dateIn">Дата заезда:</label>
+        <input type="text" id="dateIn" name="dateIn"  required>
+
+        <label for="dateOut">Дата отъезда:</label>
+        <input type="text" id="dateOut" name="dateOut"  required>
+
+        <button type="button" onclick="submitForm()">Отправить запрос</button>
+    </form>
+
+    <script>
+        async function submitForm() {
+            const idRoom = document.getElementById('idRoom').value;
+            const idGuest = document.getElementById('idGuest').value;
+            const dateIn = document.getElementById('dateIn').value;
+            const dateOut = document.getElementById('dateOut').value;
+
+            const requestData = {
+                id_room: idRoom,
+                id_guest: idGuest,
+                date_in: dateIn,
+                date_out:dateOut
+            };
+
+            try {
+                const response = await fetch('/api/booking', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+
+                if (response.ok) {
+                    alert('Запрос успешно отправлен!');
+                    // Дополнительные действия по необходимости
+                } else {
+                    alert('Произошла ошибка при отправке запроса.');
+                }
+            } catch (error) {
+                console.error('Ошибка при отправке запроса:', error);
+            }
+        }
+    </script>
+</div>
+
+<div id=update>
+        <h1>Обновление записи в таблице</h1>
+        <form id="updateForm">
+
+            <label for="idGuest2">ID гостя:</label>
+            <input type="text" id="idGuest2" name="idGuest"  required>
+
+            <label for="dateIn2">Дата заезда:</label>
+            <input type="text" id="dateIn2" name="dateIn"  required>
+
+            <label for="dateOut2">Дата отъезда:</label>
+            <input type="text" id="dateOut2" name="dateOut"  required>
+
+            <button type="button" onclick="updateData()">Отправить запрос</button>
+        </form>
+
+    <script>
+        async function updateData() {
+            const idGuest = document.getElementById('idGuest2').value;
+            const dateIn = document.getElementById('dateIn2').value;
+            const dateOut = document.getElementById('dateOut2').value;
+
+            const requestData = {
+                id_guest: idGuest,
+                date_in: dateIn,
+                date_out:dateOut
+            };
+            try {
+                const response = await fetch('/api/booking', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+                if (response.ok) {
+                    alert('Запрос успешно отправлен!');
+                    // Дополнительные действия по необходимости
+                } else {
+                    alert('Произошла ошибка при отправке запроса.');
+                }
+            } catch (error) {
+                console.error('Ошибка при отправке запроса:', error);
+            }
+        }
+
+    </script>
+
+</div>
+
+<div>
+    <h1>Удаление записи из таблицы</h1>
+
+    <form id="deleteForm">
+        <label for="idToDelete">ID для удаления:</label>
+        <input type="text" id="idToDelete" name="idToDelete" required>
+
+        <button type="button" onclick="submitDeleteForm()">Удалить запись</button>
+    </form>
+
+    <script>
+        async function submitDeleteForm() {
+            const idToDelete = document.getElementById('idToDelete').value;
+
+            try {
+                const response = await fetch(`/api/booking/${idToDelete}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    alert('Запрос на удаление успешно отправлен!');
+                    // Дополнительные действия по необходимости
+                } else {
+                    alert('Произошла ошибка при отправке запроса на удаление.');
+                }
+            } catch (error) {
+                console.error('Ошибка при отправке запроса на удаление:', error);
+            }
+        }
+    </script>
+</div>
+
+<div id="content-container">
+    <!-- Здесь будет контент страницы -->
+
+    <h1>Проживание в номерах</h1>
+    <table id="result-table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>ID комнаты</th>
+            <th>ID гостя</th>
+            <th>Дата заезда</th>
+            <th>Дата выезда</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<button onclick="navigateToGuestPage()">Посмотреть постояльцев</button>
+<button onclick="navigateToApartmentPage()">Посмотреть занятость номеров</button>
+<button onclick="navigateToServiceHistoryPage()">Посмотреть историю обслуживания</button>
+<button onclick="navigateToAdditionalPage()">Посмотреть дополнительные услуги</button>
+<button onclick="navigateToStaffPage()">Посмотреть персонал</button>
+<button onclick="navigateToViewPage()">Посмотреть график постольяцев</button>
+
+<script>
+    // Функция для загрузки данных с сервера и отображения в таблице
+    async function fetchData() {
+        const response = await fetch('/api/booking');
+        const data = await response.json();
+
+        const tableBody = document.querySelector('#result-table tbody');
+
+        data.forEach(row => {
+            const newRow = tableBody.insertRow();
+            Object.values(row).forEach(value => {
+                const cell = newRow.insertCell();
+                cell.textContent = value;
+            });
+        });
+    }
+    fetchData();
+    function navigateToAdditionalPage() {
+        window.location.href = '/additional_services';
+    }
+
+    function navigateToViewPage() {
+        window.location.href = '/view.html';
+    }
+    function navigateToApartmentPage() {
+        window.location.href = '/apartment.html';
+    }
+
+    function navigateToStaffPage() {
+        window.location.href = '/staff.html';
+    }
+    function navigateToServiceHistoryPage() {
+        window.location.href = '/serviceHistory.html';
+    }
+
+    function navigateToGuestPage() {
+        window.location.href = '/guest.html';
+    }
+
+</script>
+

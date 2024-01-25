@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Дополнительные услуги</title>
+    <style>
+        table {
+            font-family: Arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+<div id = "staffPageContainer">
+    <h1>Список персонала</h1>
+    <table id = "staff_table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Должность</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<button onclick="navigateToGuestPage()">Посмотреть постояльцев</button>
+<button onclick="navigateToBookingPage()">Посмотреть бронирование</button>
+<button onclick="navigateToApartmentPage()">Посмотреть занятость номеров</button>
+<button onclick="navigateToServiceHistoryPage()">Посмотреть историю обслуживания</button>
+<button onclick="navigateToAdditionalPage()">Посмотреть дополнительные услуги</button>
+<button onclick="navigateToViewPage()">Посмотреть график постольяцев</button>
+
+<script>
+    // Функция для загрузки данных с сервера и отображения в таблице
+    async function fetchData() {
+        const response = await fetch('/api/staff');
+        const data = await response.json();
+
+        const tableBody = document.querySelector('#staff_table tbody');
+
+        data.forEach(row => {
+            const newRow = tableBody.insertRow();
+            Object.values(row).forEach(value => {
+                const cell = newRow.insertCell();
+                cell.textContent = value;
+            });
+        });
+    }
+
+    fetchData();
+
+
+    function navigateToAdditionalPage() {
+        window.location.href = '/additional_services';
+    }
+
+    function navigateToViewPage() {
+        window.location.href = '/view';
+    }
+    function navigateToApartmentPage() {
+        window.location.href = '/apartment.html';
+    }
+
+    function navigateToGuestPage() {
+        window.location.href = '/guest.html';
+    }
+    function navigateToServiceHistoryPage() {
+        window.location.href = '/serviceHistory.html';
+    }
+
+    function navigateToBookingPage() {
+        window.location.href = '/booking.html';
+    }
+
+</script>
+
+</body>
+</html>

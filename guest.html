@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Постояльцы</title>
+    <style>
+        table {
+            font-family: Arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+<div id="pageGuest">
+    <h1>Добавление записи в таблицу</h1>
+
+    <form id="postForm">
+        <label for="fullName">Полное имя:</label>
+        <input type="text" id="fullName" name="fullName"  required>
+
+        <label for="sex">Пол:</label>
+        <select id="sex" name="sex" required>
+            <option value="МУЖ">Мужской</option>
+            <option value="ЖЕН">Женский</option>
+        </select>
+
+        <button type="button" onclick="submitForm()">Отправить запрос</button>
+    </form>
+
+    <script>
+        async function submitForm() {
+            const fullName = document.getElementById('fullName').value;
+            const sex = document.getElementById('sex').value;
+
+            const requestData = {
+                full_name: fullName,
+                sex: sex
+            };
+
+            try {
+                const response = await fetch('/api/guest', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+
+                if (response.ok) {
+                    alert('Запрос успешно отправлен!');
+                    // Дополнительные действия по необходимости
+                } else {
+                    alert('Произошла ошибка при отправке запроса.');
+                }
+            } catch (error) {
+                console.error('Ошибка при отправке запроса:', error);
+            }
+        }
+    </script>
+</div>
+
+<div id=update>
+    <h1>Обновление записи в таблице</h1>
+    <form id="updateForm">
+
+        <label for="idGuest2">ID гостя:</label>
+        <input type="text" id="idGuest2" name="idGuest2"  required>
+
+        <label for="fullName2">Полное имя:</label>
+        <input type="text" id="fullName2" name="fullName2"  required>
+
+        <label for="sex2">Пол:</label>
+        <select id="sex2" name="sex2" required>
+            <option value="МУЖ">Мужской</option>
+            <option value="ЖЕН">Женский</option>
+        </select>
+
+        <button type="button" onclick="updateData()">Отправить запрос</button>
+    </form>
+
+    <script>
+        async function updateData() {
+            const idGuest = document.getElementById('idGuest2').value;
+            const fullName = document.getElementById('fullName2').value;
+            const sex = document.getElementById('sex2').value;
+
+            const requestData = {
+                id_guest: idGuest,
+                full_name: fullName,
+                sex:sex
+            };
+            try {
+                const response = await fetch('/api/guest', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+                if (response.ok) {
+                    alert('Запрос успешно отправлен!');
+                    // Дополнительные действия по необходимости
+                } else {
+                    alert('Произошла ошибка при отправке запроса.');
+                }
+            } catch (error) {
+                console.error('Ошибка при отправке запроса:', error);
+            }
+        }
+
+    </script>
+
+</div>
+
+
+<div>
+    <h1>Удаление записи из таблицы</h1>
+
+    <form id="deleteForm">
+        <label for="idToDelete">ID для удаления:</label>
+        <input type="text" id="idToDelete" name="idToDelete" required>
+
+        <button type="button" onclick="submitDeleteForm()">Удалить запись</button>
+    </form>
+
+    <script>
+        async function submitDeleteForm() {
+            const idToDelete = document.getElementById('idToDelete').value;
+
+            try {
+                const response = await fetch(`/api/guest/${idToDelete}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    alert('Запрос на удаление успешно отправлен!');
+                    // Дополнительные действия по необходимости
+                } else {
+                    alert('Произошла ошибка при отправке запроса на удаление.');
+                }
+            } catch (error) {
+                console.error('Ошибка при отправке запроса на удаление:', error);
+            }
+        }
+    </script>
+</div>
+
+
+<div id="content-container">
+    <!-- Здесь будет контент страницы -->
+
+    <h1>Список постояльцев</h1>
+    <table id="result-table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Полное имя</th>
+            <th>Пол</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+
+<button onclick="navigateToBookingPage()">Посмотреть бронирование</button>
+<button onclick="navigateToApartmentPage()">Посмотреть занятость номеров</button>
+<button onclick="navigateToServiceHistoryPage()">Посмотреть историю обслуживания</button>
+<button onclick="navigateToAdditionalPage()">Посмотреть дополнительные услуги</button>
+<button onclick="navigateToStaffPage()">Посмотреть персонал</button>
+<button onclick="navigateToViewPage()">Посмотреть график постольяцев</button>
+
+
+
+<script>
+    // Функция для загрузки данных с сервера и отображения в таблице
+    async function fetchData() {
+        const response = await fetch('/api/guest');
+        const data = await response.json();
+
+        const tableBody = document.querySelector('#result-table tbody');
+
+        data.forEach(row => {
+            const newRow = tableBody.insertRow();
+            Object.values(row).forEach(value => {
+                const cell = newRow.insertCell();
+                cell.textContent = value;
+            });
+        });
+    }
+    fetchData();
+    function navigateToAdditionalPage() {
+        window.location.href = '/additional_services';
+    }
+
+    function navigateToViewPage() {
+        window.location.href = '/view.html';
+    }
+    function navigateToApartmentPage() {
+        window.location.href = '/apartment.html';
+    }
+
+    function navigateToStaffPage() {
+        window.location.href = '/staff.html';
+    }
+    function navigateToServiceHistoryPage() {
+        window.location.href = '/serviceHistory.html';
+    }
+
+    function navigateToBookingPage() {
+        window.location.href = '/booking.html';
+    }
+
+</script>
+</body>
+</html>

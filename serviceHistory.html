@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Постояльцы</title>
+    <style>
+        table {
+            font-family: Arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+<div id="pageGuest">
+    <h1>Добавление записи в таблицу</h1>
+
+    <form id="postForm">
+        <label for="idRoom">ID комнаты:</label>
+        <input type="text" id="idRoom" name="idRoom"  required>
+
+        <label for="idWorker">ID работника:</label>
+        <input type="text" id="idWorker" name="idWorker"  required>
+
+        <label for="description">Описание:</label>
+        <input type="text" id="description" name="description"  required>
+
+        <label for="execDay">День выполнения:</label>
+        <input type="text" id="execDay" name="execDay"  required>
+
+        <button type="button" onclick="submitForm()">Отправить запрос</button>
+    </form>
+
+    <script>
+        async function submitForm() {
+            const idRoom = document.getElementById('idRoom').value;
+            const idWorker = document.getElementById('idWorker').value;
+            const description = document.getElementById('description').value;
+            const execDay = document.getElementById('execDay').value;
+
+            const requestData = {
+                id_room: idRoom,
+                id_worker: idWorker,
+                description: description,
+                exec_day: execDay
+            };
+
+            try {
+                const response = await fetch('/api/service_history_log', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+
+                if (response.ok) {
+                    alert('Запрос успешно отправлен!');
+                    // Дополнительные действия по необходимости
+                } else {
+                    alert('Произошла ошибка при отправке запроса.');
+                }
+            } catch (error) {
+                console.error('Ошибка при отправке запроса:', error);
+            }
+        }
+    </script>
+
+</div>
+
+<div id="service-container">
+    <h1>График обслуживания</h1>
+    <table id="result-table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>ID комнаты</th>
+            <th>ID работника</th>
+            <th>Описание</th>
+            <th>День выполнения</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<button onclick="navigateToGuestPage()">Посмотреть постояльцев</button>
+<button onclick="navigateToBookingPage()">Посмотреть бронирование</button>
+<button onclick="navigateToApartmentPage()">Посмотреть занятость номеров</button>
+<button onclick="navigateToAdditionalPage()">Посмотреть дополнительные услуги</button>
+<button onclick="navigateToStaffPage()">Посмотреть персонал</button>
+<button onclick="navigateToViewPage()">Посмотреть график постольяцев</button>
+
+<script>
+    async function fetchData(){
+        const response = await fetch('/api/service_history_log');
+        const data = await response.json();
+
+        const tableBody = document.querySelector('#result-table');
+
+        data.forEach(row => {
+            const newRow = tableBody.insertRow();
+            Object.values(row).forEach(value => {
+                const cell = newRow.insertCell();
+                cell.textContent = value;
+            });
+        });
+    }
+    fetchData();
+    function navigateToAdditionalPage() {
+        window.location.href = '/additional_services';
+    }
+
+    function navigateToViewPage() {
+        window.location.href = '/view.html';
+    }
+    function navigateToApartmentPage() {
+        window.location.href = '/apartment.html';
+    }
+
+    function navigateToStaffPage() {
+        window.location.href = '/staff.html';
+    }
+    function navigateToGuestPage() {
+        window.location.href = '/guest.html';
+    }
+    function navigateToBookingPage() {
+        window.location.href = '/booking.html';
+    }
+
+</script>
+</body>
+</html>
